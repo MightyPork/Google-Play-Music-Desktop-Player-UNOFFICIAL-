@@ -1,9 +1,8 @@
 import { remote } from 'electron';
 
-const bWindow = remote.getCurrentWindow();
+const window = remote.getCurrentWindow();
 
-window.addEventListener('beforeunload', bWindow.removeAllListeners());
-bWindow.on('app-command', (e, cmd) => {
+window.on('app-command', (e, cmd) => {
   if (cmd === 'browser-backward') {
     remote.getCurrentWebContents().goBack();
   } else if (cmd === 'browser-forward') {
