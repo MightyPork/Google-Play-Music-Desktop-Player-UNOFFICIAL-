@@ -1,6 +1,7 @@
 import { remote } from 'electron';
 import _ from 'lodash';
 
+/** Hide elements by a selector */
 const hide = (elementSelector, kill = false) => {
   const nodeList = document.querySelectorAll(elementSelector);
   _.forEach(nodeList, (node) => {
@@ -12,6 +13,7 @@ const hide = (elementSelector, kill = false) => {
   });
 };
 
+/** Set CSS style by a selector */
 const style = (elementSelector, styleObject) => {
   const nodeList = document.querySelectorAll(elementSelector);
   _.forEach(nodeList, (node) => {
@@ -22,6 +24,7 @@ const style = (elementSelector, styleObject) => {
   });
 };
 
+/** Inject a CSS rule to the page (in a <style> tag) */
 const cssRule = (styles) => {
   const tag = document.createElement('style');
   tag.type = 'text/css';
@@ -29,7 +32,28 @@ const cssRule = (styles) => {
   document.head.appendChild(tag);
 };
 
+// Modify the GUI after everything is sufficiently loaded
 window.wait(() => {
+  hideNotWorkingStuff();
+  fixShopButton();
+  installDesktopSettingsButton();
+  installBackButton();
+});
+
+/** Change the Shop button to open Shop in external browser */
+function fixShopButton() {
+  const shopButton = document.querySelector('[data-type="shop"]');
+  if (shopButton) {
+    shopButton.addEventListener('click', (e) => {
+      remote.shell.openExternal('https://play.google.com/store/music?feature=music_general');
+      e.preventDefault();
+      return false;
+    });
+  }
+}
+
+/** Hide buttons & elements that don't work */
+function hideNotWorkingStuff() {
   // Top left account control buttons
   hide('#material-one-right #gb > div > div > div:not(:last-child)');
   style('#material-one-right #gb > div > div > div:last-child',
@@ -44,20 +68,17 @@ window.wait(() => {
   hide('[data-action="help-and-feedback"]');
   hide('[data-action="send-gift"]');
 
-  const shopButton = document.querySelector('[data-type="shop"]');
-  if (shopButton) {
-    shopButton.addEventListener('click', (e) => {
-      remote.shell.openExternal('https://play.google.com/store/music?feature=music_general');
-      e.preventDefault();
-      return false;
-    });
-  }
+  // Hide the upload music button in settings
+  cssRule('.music-sources-card.settings-card {display: none !important}');
 
   hide('.upload-dialog-bg', true);
   hide('.upload-dialog', true);
 
   setInterval(() => hide('.goog-menu.now-playing-menu > .goog-menuitem:nth-child(3)'), 500);
+}
 
+/** Create the Desktop Settings button in the left sidebar */
+function installDesktopSettingsButton() {
   const dSettings = document.createElement('a');
   dSettings.setAttribute('data-type', 'desktopsettings');
   dSettings.setAttribute('class', 'nav-item-container tooltip');
@@ -71,8 +92,10 @@ window.wait(() => {
     return false;
   });
   document.querySelectorAll('.nav-section.material')[0].insertBefore(dSettings, document.querySelectorAll('.nav-section.material > a')[2]); // eslint-disable-line
+}
 
-  // Back button
+/** Create the back button. */
+function installBackButton() {
   const back = document.createElement('paper-icon-button');
   back.addEventListener('click', () => history.back());
   back.setAttribute('icon', 'arrow-back');
@@ -93,11 +116,8 @@ window.wait(() => {
   // Make sure the clearSearch button is above the arrow
   style('sj-search-box #clearButton', { 'z-index': 10 });
 
-  // Hide icon if search box has query
+  // Hide Back button if search box has query
   cssRule('sj-search-box[has-query] #backButton {opacity: 0 !important}');
-
-  // Hide the upload music button in settings
-  cssRule('.music-sources-card.settings-card {display: none !important}');
 
   // Ideally we should listen for the URL change
   // 'hashchange' does not seem to work :(
@@ -110,4 +130,4 @@ window.wait(() => {
       back.style.opacity = 1;
     }
   }, 250);
-});
+}
