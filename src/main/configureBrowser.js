@@ -15,9 +15,9 @@ export default () => {
     x: Settings.get('X'),
     y: Settings.get('Y'),
     show: false,
-    frame: false,
+    autoHideMenuBar: true,
+    frame: Settings.get('nativeFrame'),
     icon: path.resolve(`${__dirname}/../assets/img/main.png`),
-    fullscreen: false,
     title: 'Nucleus Player',
     nodeIntegration: true,
     'web-preferences': {

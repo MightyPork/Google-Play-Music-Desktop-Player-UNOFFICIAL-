@@ -7,11 +7,12 @@ module.exports = (grunt) => {
       // This is what Github does with atom so it kinda makes sense :)
       ia32: {
         appDirectory: `dist/${packageJSON.productName}-win32-ia32`,
-        outputDirectory: 'dist/win32',
-        authors: packageJSON.author,
+        outputDirectory: 'dist/installers/win32',
+        authors: packageJSON.author.name,
         exe: `${packageJSON.productName}.exe`,
         description: packageJSON.productName,
         title: packageJSON.productName,
+        owners: packageJSON.author.name,
         name: 'GPMDP_3',
         noMsi: true,
         certificateFile: '.cert.pfx',
@@ -22,7 +23,7 @@ module.exports = (grunt) => {
         loadingGif: 'build/assets/img/installing.gif',
         // DEV: After initial 3.0.0 release this should be uncommented
         // TODO: Read DEV above ^^
-        // remoteReleases: 'https://github.com/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-',
+        remoteReleases: 'https://github.com/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-',
       },
     },
   });

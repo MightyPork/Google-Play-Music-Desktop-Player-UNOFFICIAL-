@@ -12,6 +12,20 @@ html, body {
   padding: 0;
 }
 
+// Hide custom frame when native frame is used
+.native-frame {
+  .window-border {
+    border: 0;
+    > header {
+      display: none;
+    }
+
+    .embedded-player {
+      height: 100vh !important;
+    }
+  }
+}
+
 .window-border {
   .fill-parent;
   border: @border-width solid @orange;
@@ -75,6 +89,13 @@ html, body {
 
       [loading] & {
         opacity: 0;
+      }
+
+      &::shadow {
+        object {
+          height: 100%;
+          width: 100%;
+        }
       }
     }
   }

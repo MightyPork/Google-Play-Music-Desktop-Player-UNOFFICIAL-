@@ -7,8 +7,13 @@ if (process.platform === 'darwin') {
 }
 
 const setUpAutoUpdate = () => {
+  if (global.DEV_MODE) return;
   try {
     autoUpdater.setFeedURL(`http://update.googleplaymusicdesktopplayer.com/update/${platform}/${app.getVersion()}`);
+
+    autoUpdater.on('error', () => {
+      // Ignore it, errors happen
+    });
 
     autoUpdater.on('checking-for-update', () => {
       // Do something

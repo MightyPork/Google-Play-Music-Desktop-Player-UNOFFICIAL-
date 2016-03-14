@@ -1,21 +1,12 @@
 import fs from 'fs';
-import mkdirp from 'mkdirp';
-
-const environment = process.env;
+import createJSON from './_jsonCreator';
+import _ from 'lodash';
 
 class PlaybackAPI {
   constructor() {
-    const DIR = (environment.APPDATA ||
-      (process.platform === 'darwin' ? environment.HOME + '/Library/Preferences' : '/var/local')) +
-      '/GPMDP_STORE';
-    this.PATH = `${DIR}/playback.json`;
-
+    this.PATH = createJSON('playback');
     this.reset();
-
-    if (!fs.existsSync(this.PATH)) {
-      mkdirp(DIR);
-      this._save();
-    }
+    this._save();
 
     this._ev = {};
 
@@ -34,6 +25,12 @@ class PlaybackAPI {
     Emitter.on('change:playback-time', (event, timeObj) => {
       this.setTime(timeObj.current, timeObj.total);
     });
+    // we throttle this function because of a bug in gmusic.js
+    // ratings are received multiple times here in a couple of ms
+    // to avoid writing the file 5+ times we throttle it to 500ms max
+    Emitter.on('change:rating', _.throttle((event, details) => {
+      this._setRating(details);
+    }, 500));
   }
 
   reset() {
@@ -45,6 +42,10 @@ class PlaybackAPI {
         album: null,
         albumArt: null,
       },
+      rating: {
+        liked: false,
+        disliked: false,
+      },
       time: {
         current: 0,
         total: 0,
@@ -55,7 +56,9 @@ class PlaybackAPI {
   }
 
   _save() {
-    fs.writeFileSync(this.PATH, JSON.stringify(this.data));
+    if (Settings.get('enableJSONApi', true)) {
+      fs.writeFileSync(this.PATH, JSON.stringify(this.data, null, 4));
+    }
   }
 
   setPlaying(isPlaying) {
@@ -71,10 +74,23 @@ class PlaybackAPI {
       album,
       albumArt,
     };
+    this._resetRating();
     this.data.songLyrics = null;
     this._fire('change:song', this.data.song);
     this._fire('change:lyrics', this.data.songLyrics);
     this._save();
+  }
+
+  _setRating(rating) {
+    this.data.rating.liked = rating === '5';
+    this.data.rating.disliked = rating === '1';
+    this._fire('change:rating', this.data.rating);
+    this._save();
+  }
+
+  _resetRating() {
+    this.data.rating.liked = false;
+    this.data.rating.disliked = false;
   }
 
   setPlaybackSongLyrics(lyricString) {

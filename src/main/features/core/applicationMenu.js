@@ -20,6 +20,11 @@ const template = [
         accelerator: 'CmdOrCtrl+V',
         role: 'paste',
       },
+      {
+        label: 'Select All',
+        accelerator: 'CmdOrCtrl+A',
+        role: 'selectall',
+      },
     ],
   },
   {
@@ -33,6 +38,13 @@ const template = [
         })(),
         click: (item, focusedWindow) => {
           if (focusedWindow) focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+        },
+      },
+      {
+        label: 'Go to URL',
+        accelerator: 'CmdOrCtrl+Shift+G',
+        click: () => {
+          Emitter.sendToWindowsOfName('main', 'gotourl');
         },
       },
     ],
@@ -138,6 +150,23 @@ if (process.platform === 'darwin') {
     {
       label: 'Bring All to Front',
       role: 'front',
+    }
+  );
+}
+
+if (global.DEV_MODE) {
+  template[4].submenu.push(
+    {
+      type: 'separator',
+    }, {
+      label: 'Toggle Developer Tools',
+      accelerator: (() => {
+        if (process.platform === 'darwin') return 'Alt+Command+I';
+        return 'Ctrl+Shift+I';
+      })(),
+      click: (item, focusedWindow) => {
+        if (focusedWindow) focusedWindow.toggleDevTools();
+      },
     }
   );
 }

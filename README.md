@@ -5,11 +5,12 @@ Google Play Music™ Desktop Player
 [![Github All Releases](https://img.shields.io/github/downloads/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-/total.svg)](https://github.com/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-/releases)
  [![GitHub version](https://badge.fury.io/gh/MarshallOfSound%2FGoogle-Play-Music-Desktop-Player-UNOFFICIAL-.svg)](https://badge.fury.io/gh/MarshallOfSound%2FGoogle-Play-Music-Desktop-Player-UNOFFICIAL-)  [![Code Climate](https://codeclimate.com/github/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-/badges/gpa.svg)](https://codeclimate.com/github/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-) <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=23CZGASL6XMLJ" title="Help me out by donating to this project"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a>  
  Windows: [![Build status](https://ci.appveyor.com/api/projects/status/clg5vclqyltff7hg/branch/master?svg=true)](https://ci.appveyor.com/project/MarshallOfSound/google-play-music-desktop-player-unofficial/branch/master)  
- Max OSX: [![Build Status](https://travis-ci.org/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-.svg?branch=master)](https://travis-ci.org/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-)
+ Max OS X: [![Build Status](https://travis-ci.org/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-.svg?branch=master)](https://travis-ci.org/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-)  
+ Linux: [![Circle CI](https://circleci.com/gh/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-/tree/master.svg?style=svg)](https://circleci.com/gh/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-/tree/master)
 
 ![](http://samuel.ninja/img/gpmdp_screen.gif)
 
-Run Google Play Music as a stand alone Desktop app.  Never again will you have to hunt through your tabs to pause your music, or stop listening to your favourite song because Chrome is guzzling up all your RAM..
+Run Google Play Music as a standalone desktop app.  Never again will you have to hunt through your tabs to pause your music, or stop listening to your favourite song because Chrome is guzzling up all your RAM..
 
 Developed by [Samuel Attard][1].
 
@@ -25,10 +26,11 @@ OS Support
 ------------
 
 * Windows 7 or later
-* Mac OSX 10.8.0 or later
+* Mac OS X 10.9.0 or later
 * Ubuntu 14.04 or later
-
-**Note: We do not current have automated builds for Ubuntu (PR's are welcome)**
+* Mint
+* Fedora
+* Debian
 
 Features
 --------
@@ -66,6 +68,7 @@ To get started just pull the repo and run the following
 
 ```bash
 npm install
+npm run build
 npm start
 ```
 
@@ -74,11 +77,17 @@ To build the installers / release packages you need to run, you can only build a
 # Windows
 npm run make:win
 
-# Mac OSX
+# Mac OS X
 npm run make:darwin
+
+# Ubuntu (Requires the 'dpkg' package)
+npm run make:deb
+
+# Fedora (Requires the 'rpm' package)
+npm run make:rpm
 ```
 
-All releases will be signing with my Code Signing Certificates (Authenticode on Windows and Codesign on OSX)
+All releases will be signing with my Code Signing Certificates (Authenticode on Windows and Codesign on OS X)
 
 Contributing
 ------------
@@ -93,27 +102,31 @@ If you think you can add something cool or fix a problem, fork the repo and make
 
 Dev Requirements
 ----------------
-* Node.js (Recommend `4.2.x`)
+* Node.js (Recommend `4.4.x`)
+* NPM (3.x.x)
 
 Continuous Integration
 ------------------------
 
-We run tests and generate signed installers on two CI platforms
+We run tests and generate signed installers on three CI platforms
 * Windows --> [AppVeyor][2]
-* OSX --> [Travis CI][3]
+* OS X --> [Travis CI][3]
+* Linux --> [Circle CI][4]
 
 You can download the latest signed installers for Windows from the artifacts section of AppVeyor  
-You can download the latest signed package for OSX from the URL at the bottom of the build log on Travis CI
+You can download the latest signed package for OS X from the URL at the bottom of the build log on Travis CI  
+You can download the latest linux (debian and fedora) builds from the artifacts section on Circle CI
 
 [2]: https://ci.appveyor.com/project/MarshallOfSound/google-play-music-desktop-player-unofficial
 [3]: https://travis-ci.org/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-
+[4]: https://circleci.com/gh/MarshallOfSound/Google-Play-Music-Desktop-Player-UNOFFICIAL-
 
 License
 -------
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Samuel Attard
+Copyright (c) 2016 Samuel Attard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

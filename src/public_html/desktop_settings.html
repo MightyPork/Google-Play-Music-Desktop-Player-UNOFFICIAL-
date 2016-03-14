@@ -43,7 +43,7 @@
               </p>
               <p>
                 <input type="checkbox" class="filled-in" id="theme-state" />
-                <label for="theme-state">Theme Enabled</label>
+                <label for="theme-state">Dark Theme</label>
               </p>
             </div>
             <div class="color-square-wrapper">
@@ -75,6 +75,10 @@
                 <input type="checkbox" class="filled-in" id="playback-api" />
                 <label for="playback-api">Enable Playback API <i>This allows other applications to interface with GPMDP</i></label>
               </p>
+              <p>
+                <input type="checkbox" class="filled-in" id="native-frame" />
+                <label for="native-frame">Use system window borders <i>Requires restart.</i></label>
+              </p>
             </div>
           </div>
           <div id="mini" class="col s12 settings-box">
@@ -85,7 +89,7 @@
               </p>
               <p>
                 <input type="checkbox" class="filled-in" id="mini-always-show-song-info" />
-                <label for="mini-always-show-song-info">Show song information always</label>
+                <label for="mini-always-show-song-info">Always show song information</label>
               </p>
             </div>
           </div>
@@ -94,8 +98,8 @@
             <a class="waves-effect waves-light btn lastfm-button"><i class="material-icons left">exit_to_app</i>Log in to Last.FM</a>
           </div>
           <div id="hotkeys" class="col s12 settings-box">
-            <span>Default media keys will continue to work regardless of these settings.  These settings are in addition to the defaults</span>
-            <span>Use the <i>"Escape"</i> key to reset the hotkey</span>
+            <span>Default media keys will continue to work regardless of these settings.  These settings are in addition to the defaults.</span>
+            <span>Use the <i>"Escape"</i> key to reset the hotkey.</span>
             <div class="row">
               <div class="input-field col s6">
                 <input placeholder="Not Set" id="playPause" type="text">
@@ -124,6 +128,16 @@
               <div class="input-field col s6">
                 <input placeholder="Not Set" id="thumbsDown" type="text">
                 <label for="last_name">Thumbs Down Current Song</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s6">
+                <input placeholder="Not Set" id="decreaseVolume" type="text">
+                <label for="first_name">Decrease Volume</label>
+              </div>
+              <div class="input-field col s6">
+                <input placeholder="Not Set" id="increaseVolume" type="text">
+                <label for="last_name">Increase Volume</label>
               </div>
             </div>
           </div>

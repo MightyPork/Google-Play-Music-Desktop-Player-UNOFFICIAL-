@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
+import { argv } from 'yargs';
 
 import configureApp from './main/configureApp';
 import generateBrowserConfig from './main/configureBrowser';
@@ -7,6 +8,7 @@ import EmitterClass from './main/utils/Emitter';
 import SettingsClass from './main/utils/Settings';
 import WindowManagerClass from './main/utils/WindowManager';
 import PlaybackAPIClass from './main/utils/PlaybackAPI';
+import I3IpcHelperClass from './main/utils/I3IpcHelper';
 
 import handleStartupEvent from './squirrel';
 
@@ -14,6 +16,8 @@ import handleStartupEvent from './squirrel';
   if (handleStartupEvent()) {
     return;
   }
+
+  global.DEV_MODE = argv.development || argv.dev;
 
   configureApp(app);
 
@@ -54,20 +58,29 @@ import handleStartupEvent from './squirrel';
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   app.on('ready', () => {
-    // mainWindow = new BrowserWindow(require('./lib/configureBrowser')(electron, app));
     mainWindow = new BrowserWindow(generateBrowserConfig());
     global.mainWindowID = WindowManager.add(mainWindow, 'main');
 
     const position = Settings.get('position');
+    let inBounds = false;
+    screen.getAllDisplays().forEach((display) => {
+      if (position[0] >= display.workArea.x &&
+          position[0] <= display.workArea.x + display.workArea.width &&
+          position[1] >= display.workArea.y &&
+          position[1] <= display.workArea.y + display.workArea.height) {
+        inBounds = true;
+      }
+    });
+
     let size = Settings.get('size');
     size = size || [1200, 800];
 
-    if (position) {
+    mainWindow.setSize(...size);
+    if (position && inBounds) {
       mainWindow.setPosition(...position);
     } else {
       mainWindow.center();
     }
-    mainWindow.setSize(...size);
 
     // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/public_html/index.html`);
@@ -82,6 +95,10 @@ import handleStartupEvent from './squirrel';
       mainWindow = null;
       PlaybackAPI.reset();
     });
+
+    // setup i3 listener
+    const I3IpcHelper = new I3IpcHelperClass();
+    I3IpcHelper.setupEventListener();
   });
 
   app.on('before-quit', () => {

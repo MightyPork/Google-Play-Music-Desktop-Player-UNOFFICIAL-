@@ -6,7 +6,9 @@ applications to determine the currently played song and playback status.
 The interface is provided through a file that is continuously updated,
 allowing external applications to watch the file to always have the
 current playback information. The file is JSON-formatted and located at
-`%APPDATA%\GPMDP_STORE\playback.json`
+* Windows: `%APPDATA%\Google Play Music Desktop Player\json_store\playback.json`
+* OS X: `~/Library/Application Support/Google Play Music Desktop Player/json_store/playback.json`
+* Linux: `~/.config/Google Play Music Desktop Player/json_store/playback.json`
 
 ## Data Format
 
@@ -40,6 +42,10 @@ All attributes are `0` of no song is playing.  If a song is paused the variables
     "album": "Tattoos",
     "albumArt": "https://lh6.ggpht.com/J9gNObbLJ_R71OHy-F6ENINYlnjf6Hjx_dw4RV0GLSTH1zrDEFSeRcW_Kf2fTws0swmOXwot=s90-c-e100"
   },
+  "rating": {
+    "liked": false,
+    "disliked": false,
+  },
   "time": {
     "current": 4908,
     "total": 217000
@@ -55,6 +61,10 @@ All attributes are `0` of no song is playing.  If a song is paused the variables
     "artist": null,
     "album": null,
     "albumArt": null
+  },
+  "rating": {
+    "liked": false,
+    "disliked": false,
   },
   "time": {
     "current": 0,

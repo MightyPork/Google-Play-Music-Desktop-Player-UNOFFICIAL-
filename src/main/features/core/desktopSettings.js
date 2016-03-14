@@ -8,8 +8,9 @@ export const showDesktopSettings = () => {
   }
   const desktopSettings = new BrowserWindow({
     width: 800,
-    height: 400,
-    frame: false,
+    height: 540,
+    autoHideMenuBar: true,
+    frame: Settings.get('nativeFrame'),
     show: false,
     nodeIntegration: true,
     icon: path.resolve(`${__dirname}/../../../assets/img/main.png`),
