@@ -1,6 +1,9 @@
 import { remote } from 'electron';
 import _ from 'lodash';
 
+
+// --- Helpers ---
+
 /** Hide elements by a selector */
 const hide = (elementSelector, kill = false) => {
   const nodeList = document.querySelectorAll(elementSelector);
@@ -32,13 +35,8 @@ const cssRule = (styles) => {
   document.head.appendChild(tag);
 };
 
-// Modify the GUI after everything is sufficiently loaded
-window.wait(() => {
-  hideNotWorkingStuff();
-  fixShopButton();
-  installDesktopSettingsButton();
-  installBackButton();
-});
+
+// --- UI modifications ---
 
 /** Change the Shop button to open Shop in external browser */
 function fixShopButton() {
@@ -96,12 +94,22 @@ function installDesktopSettingsButton() {
 
 /** Create the back button. */
 function installBackButton() {
-  const back = document.createElement('paper-icon-button');
-  back.addEventListener('click', () => history.back());
-  back.setAttribute('icon', 'arrow-back');
-  back.setAttribute('id', 'backButton');
-  back.setAttribute('class', 'x-scope paper-icon-button-0');
-  document.querySelector('#material-one-middle > sj-search-box').insertBefore(back, null);
+  const listenNowURL = 'https://play.google.com/music/listen#/now';
+
+  const backBtn = document.createElement('paper-icon-button');
+  backBtn.setAttribute('icon', 'arrow-back');
+  backBtn.setAttribute('id', 'backButton');
+  backBtn.setAttribute('class', 'x-scope paper-icon-button-0');
+  document.querySelector('#material-one-middle > sj-search-box').insertBefore(backBtn, null);
+
+  backBtn.addEventListener('click', () => {
+    const oldUrl = location.href;
+    history.back();
+    if (location.href === oldUrl) {
+      // couldn't go back (because the player was started on a different page than home)
+      location.href = listenNowURL; // go to listenNow
+    }
+  });
 
   style('#backButton', {
     position: 'absolute',
@@ -122,12 +130,21 @@ function installBackButton() {
   // Ideally we should listen for the URL change
   // 'hashchange' does not seem to work :(
   setInterval(() => {
-    const homePage = (location.href.indexOf('https://play.google.com/music/listen#/now') === 0);
+    const isHomePage = (location.href.indexOf(listenNowURL) === 0);
     const searching = (document.querySelector('sj-search-box input').value !== '');
-    if (homePage || searching) {
-      back.style.opacity = 0;
+    if (isHomePage || searching) {
+      backBtn.style.opacity = 0;
     } else {
-      back.style.opacity = 1;
+      backBtn.style.opacity = 1;
     }
   }, 250);
 }
+
+
+// Modify the GUI after everything is sufficiently loaded
+window.wait(() => {
+  hideNotWorkingStuff();
+  fixShopButton();
+  installDesktopSettingsButton();
+  installBackButton();
+});
