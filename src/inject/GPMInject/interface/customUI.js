@@ -105,10 +105,13 @@ function installBackButton() {
   backBtn.addEventListener('click', () => {
     const oldUrl = location.href;
     history.back();
-    if (location.href === oldUrl) {
-      // couldn't go back (because the player was started on a different page than home)
-      location.href = listenNowURL; // go to listenNow
-    }
+
+    setTimeout(() => {
+      if (location.href === oldUrl) {
+        // couldn't go back (because the player was started on a different page than home)
+        location.href = listenNowURL; // go to listenNow
+      }
+    }, 100); // it takes some time for the URL to change
   });
 
   style('#backButton', {
