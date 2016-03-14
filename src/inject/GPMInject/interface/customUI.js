@@ -103,15 +103,11 @@ function installBackButton() {
   document.querySelector('#material-one-middle > sj-search-box').insertBefore(backBtn, null);
 
   backBtn.addEventListener('click', () => {
-    const oldUrl = location.href;
-    history.back();
-
-    setTimeout(() => {
-      if (location.href === oldUrl) {
-        // couldn't go back (because the player was started on a different page than home)
-        location.href = listenNowURL; // go to listenNow
-      }
-    }, 100); // it takes some time for the URL to change
+    const testJs = 'document.querySelector("webview").canGoBack()';
+    remote.getCurrentWindow().webContents.executeJavaScript(testJs, false, (canGoBack) => {
+      if (canGoBack) return history.back();
+      location.href = listenNowURL;
+    });
   });
 
   style('#backButton', {
