@@ -131,11 +131,8 @@ function installBackButton() {
   setInterval(() => {
     const isHomePage = (location.href.indexOf(listenNowURL) === 0);
     const searching = (document.querySelector('sj-search-box input').value !== '');
-    if (isHomePage || searching) {
-      backBtn.style.opacity = 0;
-    } else {
-      backBtn.style.opacity = 1;
-    }
+    // Hide back btn if nowhere to go, or searching
+    backBtn.style.opacity = (isHomePage || searching) ? 0 : 1;
   }, 250);
 }
 
