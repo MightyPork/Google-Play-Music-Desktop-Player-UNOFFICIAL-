@@ -6,6 +6,10 @@
   width: 100%;
 }
 
+html {
+  overflow: hidden;
+}
+
 html, body {
   .fill-parent;
   margin: 0;
@@ -91,10 +95,13 @@ html, body {
         opacity: 0;
       }
 
+      outline: 0;
+
       &::shadow {
         object {
           height: 100%;
           width: 100%;
+          outline: 0;
         }
       }
     }
@@ -116,4 +123,11 @@ html, body {
   height: 60%;
   width: calc(~"100% - 14px");
   display: block;
+}
+
+#color_wheel_container {
+  padding: 14px;
+  > div {
+    margin: 0 auto;
+  }
 }
