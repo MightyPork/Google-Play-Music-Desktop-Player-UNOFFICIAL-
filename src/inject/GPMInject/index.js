@@ -1,5 +1,11 @@
 import _ from 'lodash';
+import { remote } from 'electron';
+
 import '../generic';
+
+// Initialize the global Logger to forward to the main process.
+window.Logger = remote.getGlobal('Logger');
+Logger.debug('Renderer process logger initialized.');
 
 // DEV: Hold all Emitter events until the GPM external assets have been loaded.
 Emitter.ready = false;
@@ -11,6 +17,9 @@ window.wait = (fn) => {
     waitingQueue.push(fn);
   }
 };
+
+// DEV: Polyfill window.open to be shell.openExternal
+window.open = (url) => remote.shell.openExternal(url);
 
 require('./playback');
 require('./interface');
@@ -30,7 +39,7 @@ const waitForExternal = setInterval(() => {
       try {
         fn();
       } catch (e) {
-        console.error(e); // eslint-disable-line
+        Logger.error('Emitter fn() threw exception.', e);
       }
     });
 

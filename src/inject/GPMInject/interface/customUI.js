@@ -37,17 +37,24 @@ const cssRule = (styles) => {
 
 
 // --- UI modifications ---
-
-/** Change the Shop button to open Shop in external browser */
-function fixShopButton() {
-  const shopButton = document.querySelector('[data-type="shop"]');
-  if (shopButton) {
-    shopButton.addEventListener('click', (e) => {
-      remote.shell.openExternal('https://play.google.com/store/music?feature=music_general');
+function _redirectButton(button, URL, reverseURLChange) {
+  if (button) {
+    button.addEventListener('click', (e) => {
+      remote.shell.openExternal(URL);
+      if (reverseURLChange) setImmediate(history.back);
       e.preventDefault();
       return false;
     });
   }
+}
+
+/** Change the Shop button to open Shop in external browser */
+function fixShopButton() {
+  _redirectButton(document.querySelector('[data-type="shop"]'), 'https://play.google.com/store/music?feature=music_general');
+}
+
+function handleSubscribeButton() {
+  _redirectButton(document.querySelector('.sub[data-type="sub"]'), 'https://play.google.com/music/listen#/sulp', true);
 }
 
 /** Hide buttons & elements that don't work */
@@ -95,16 +102,20 @@ function installDesktopSettingsButton() {
 /** Create the back button. */
 function installBackButton() {
   const listenNowURL = 'https://play.google.com/music/listen#/now';
+  const searchBox = (document.querySelector('#material-one-middle > sj-search-box')
+    || document.querySelector('#material-one-middle'));
+  const searchInput = (document.querySelector('sj-search-box input')
+    || document.querySelector('#material-one-middle > input'));
 
   const backBtn = document.createElement('paper-icon-button');
   backBtn.setAttribute('icon', 'arrow-back');
   backBtn.setAttribute('id', 'backButton');
   backBtn.setAttribute('class', 'x-scope paper-icon-button-0');
-  document.querySelector('#material-one-middle > sj-search-box').insertBefore(backBtn, null);
+  searchBox.insertBefore(backBtn, null);
 
   const canBack = () => {
     const isHomePage = (location.href.indexOf(listenNowURL) === 0);
-    const searching = (document.querySelector('sj-search-box input').value !== '');
+    const searching = (searchInput.value !== '');
 
     return !(isHomePage || searching);
   };
@@ -142,8 +153,33 @@ function installBackButton() {
 
   const correctButtonVis = () => backBtn.style.opacity = (!canBack()) ? 0 : 1;
   window.addEventListener('popstate', correctButtonVis);
-  document.querySelector('sj-search-box input').addEventListener('input', correctButtonVis);
+  searchInput.addEventListener('input', correctButtonVis);
   correctButtonVis();
+}
+
+function handleZoom() {
+  let zoom = Settings.get('zoom', 1);
+  remote.getCurrentWebContents().setZoomFactor(zoom);
+  window.addEventListener('keyup', (e) => {
+    if (!e.ctrlKey) return;
+    const webContents = remote.getCurrentWebContents();
+    if (e.which === 189) {
+      // Zoom out
+      zoom -= 0.1;
+    } else if (e.which === 187) {
+      // Zoom in
+      zoom += 0.1;
+    } else if (e.which === 48) {
+      zoom = 1;
+    } else {
+      return;
+    }
+    webContents.setZoomFactor(zoom);
+    Emitter.fire('settings:set', {
+      key: 'zoom',
+      value: zoom,
+    });
+  });
 }
 
 
@@ -151,6 +187,8 @@ function installBackButton() {
 window.wait(() => {
   hideNotWorkingStuff();
   fixShopButton();
+  handleSubscribeButton();
   installDesktopSettingsButton();
   installBackButton();
+  handleZoom();
 });

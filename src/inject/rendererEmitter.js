@@ -21,25 +21,24 @@ class Emitter {
       if (details && details.fn) {
         remote.getCurrentWebContents().executeJavaScript(details.fn);
       } else {
-        console.warn('Function not passed to the execute event'); // eslint-disable-line
+        Logger.warn('Function not passed to the execute event');
       }
     });
 
     ipcRenderer.on('passthrough', (event, details) => {
       const view = document.querySelector('webview');
       if (!view) {
-        console.warn('Attempting to pass event through to WebView, but no WebView found'); // eslint-disable-line
-        console.warn(details); // eslint-disable-line
+        Logger.warn('Attempting to pass event through to WebView, but no WebView found', details);
         return;
       }
       if (details && details.event) {
         if (view.isLoading()) {
-          let once = false;
+          let waitForPageLoad = 0;
           view.addEventListener('did-stop-loading', () => {
-            if (!once && !view.isLoading()) {
-              once = true;
+            if (waitForPageLoad > 1 && !view.isLoading()) {
               view.send(details.event, details.details);
             }
+            waitForPageLoad++;
           });
         } else {
           view.send(details.event, details.details);
